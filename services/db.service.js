@@ -7,11 +7,12 @@ module.exports = {
 }
 
 // Database Name
-const dbName = 'board-db'
+const dbName = 'board_db'
 
 var dbConn = null
 
 async function getCollection(collectionName) {
+    console.log('collectionName:',collectionName);
     try {
         const db = await connect()
         const collection = await db.collection(collectionName)
@@ -24,6 +25,7 @@ async function getCollection(collectionName) {
 
 async function connect() {
     if (dbConn) return dbConn
+    console.log(config.dbURL);
     try {
         const client = await MongoClient.connect(config.dbURL, {
             useNewUrlParser: true,
