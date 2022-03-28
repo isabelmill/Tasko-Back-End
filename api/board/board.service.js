@@ -3,7 +3,6 @@ const logger = require('../../services/logger.service')
 const ObjectId = require('mongodb').ObjectId
 
 async function query(filterBy) {
-    console.log('filterBy:',filterBy);
     try {
         // const criteria = _buildCriteria(filterBy)
         // console.log('criteria:',criteria);
@@ -52,7 +51,8 @@ async function add(board) {
     try {
         const collection = await dbService.getCollection('board')
         const addedboard = await collection.insertOne(board)
-        return addedboard
+        board._id = addedboard.insertedId
+        return board
     } catch (err) {
         logger.error('cannot insert board', err)
         throw err
