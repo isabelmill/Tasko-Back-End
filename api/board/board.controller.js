@@ -6,6 +6,7 @@ async function getBoards(req, res) {
   console.log('got to board controller');
   try {
     var queryParams = req.query;
+    console.log('boards in conrroller:',queryParams);
     const boards = await boardService.query(queryParams)
     res.json(boards);
   } catch (err) {
@@ -19,6 +20,7 @@ async function getBoards(req, res) {
 // GET BY ID 
 async function getBoardById(req, res) {
   try {
+    console.log('req.params._id:',req.params._id);
     const boardId = req.params._id;
     const board = await boardService.getById(boardId)
     res.json(board)
