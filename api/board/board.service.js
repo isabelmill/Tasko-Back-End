@@ -5,15 +5,16 @@ const ObjectId = require('mongodb').ObjectId
 async function query(filterBy) {
     console.log('filterBy:',filterBy);
     try {
-        const criteria = _buildCriteria(filterBy)
-        console.log('criteria:',criteria);
-        // const criteria = {}
-        const sortBy = filterBy.sortBy || 'name'
-        console.log('sortBy',sortBy);
+        // const criteria = _buildCriteria(filterBy)
+        // console.log('criteria:',criteria);
+        const criteria = {}
+        const sortBy = filterBy.sortBy || ''
+        // console.log('sortBy',sortBy);
         const collection = await dbService.getCollection('board')
-        var boards = await collection.find(criteria).sort({
-            [sortBy]: 1
-        }).toArray()
+        var boards = await collection.find(criteria).toArray()
+        // var boards = await collection.find(criteria).sort({
+        //     [sortBy]: 1
+        // }).toArray()
         return boards
     } catch (err) {
         logger.error('cannot find boards', err)
