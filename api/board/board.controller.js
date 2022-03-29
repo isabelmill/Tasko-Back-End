@@ -48,11 +48,16 @@ async function addBoard(req, res) {
 async function updateBoard(req, res) {
   try {
     const board = req.body;
-    const user = req.session;
+    const { user } = req.session;
     const updatedBoard = await boardService.update(board)
     res.json(updatedBoard)
 
-    socketService.broadcast({ type: 'board-changed', data: board, label: user._id })
+    socketService.broadcast({
+      type: 'board-changed',
+      data: board,
+      room: board._id,
+      user: user._id
+    })
   } catch (err) {
     logger.error('Failed to update board', err)
     res.status(500).send({
