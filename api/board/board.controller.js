@@ -4,7 +4,6 @@ const socketService = require('../../services/socket.service')
 
 // GET LIST
 async function getBoards(req, res) {
-  console.log('got to board controller');
   try {
     var queryParams = req.query;
     const boards = await boardService.query(queryParams)
@@ -33,7 +32,6 @@ async function getBoardById(req, res) {
 
 // POST (add board)
 async function addBoard(req, res) {
-  console.log('add board');
   try {
     const board = req.body;
     const addedBoard = await boardService.add(board)

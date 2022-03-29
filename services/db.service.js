@@ -12,7 +12,6 @@ const dbName = 'board_db'
 var dbConn = null
 
 async function getCollection(collectionName) {
-    console.log('collectionName:',collectionName);
     try {
         const db = await connect()
         const collection = await db.collection(collectionName)

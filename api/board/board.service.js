@@ -71,6 +71,7 @@ async function update(board) {
                 ...board
             }
         })
+        board._id = id
         return board
     } catch (err) {
         logger.error(`cannot update board ${boardId}`, err)
