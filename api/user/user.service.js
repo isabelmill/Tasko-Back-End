@@ -85,7 +85,7 @@ async function update(user) {
             _id: ObjectId(user._id), // needed for the returnd obj
             username: user.username,
             fullname: user.fullname,
-            score: user.score,
+            // score: user.score,
         }
         const collection = await dbService.getCollection('user')
         await collection.updateOne({
