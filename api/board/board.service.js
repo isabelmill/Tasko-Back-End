@@ -59,7 +59,7 @@ async function add(board) {
     }
 }
 async function update(board) {
-    console.log('board:', board);
+    // console.log('board:', board);
     try {
         var id = ObjectId(board._id)
         delete board._id
