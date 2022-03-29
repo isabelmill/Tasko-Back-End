@@ -47,8 +47,9 @@ async function addBoard(req, res) {
 // PUT (Update board)
 async function updateBoard(req, res) {
     try {
-        const board = req.body;
-        const user = req.session;
+        // const board = req.body;
+        logger.debug(req, 'ELIAS LOG')
+        const { user } = req.session;
         console.log(user)
         console.log(user._id, board._id)
         const updatedBoard = await boardService.update(board)
