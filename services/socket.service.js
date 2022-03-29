@@ -16,28 +16,29 @@ function connectSockets(http, session) {
             console.log('Someone disconnected')
         })
         socket.on('watch board', topic => {
-            console.log('watch', topic)
-            if (socket.myTopic === topic) return;
-            if (socket.myTopic) {
-                socket.leave(socket.myTopic)
-            }
-            socket.join(topic)
-            socket.myTopic = topic
-        })
-        // socket.on('update board', boardId => {
-        //     console.log('**************', boardId)
-        //     socket.join('watching:' + boardId)
-        // })
-        // socket.on('update board', board => {
-        //     console.log('hi save', board)
-        //     gIo.emit('socketTest', board)
-        // })
+                console.log('watch', topic)
+                if (socket.myTopic === topic) return;
+                if (socket.myTopic) {
+                    socket.leave(socket.myTopic)
+                }
+                socket.join(topic)
+                socket.myTopic = topic
+            })
+            // socket.on('update board', boardId => {
+            //     console.log('**************', boardId)
+            //     socket.join('watching:' + boardId)
+            // })
+            // socket.on('update board', board => {
+            //     console.log('hi save', board)
+            //     gIo.emit('socketTest', board)
+            // })
         socket.on('user-watch', userId => {
             socket.join('watching:' + userId)
         })
         socket.on('set-user-socket', userId => {
             logger.debug(`Setting (${socket.id}) socket.userId = ${userId}`)
             socket.userId = userId
+            console.log(socket.userId);
         })
         socket.on('unset-user-socket', () => {
             delete socket.userId
@@ -66,13 +67,17 @@ async function broadcast({ type, data, room = null, userId }) {
     console.log('BROADCASTING', JSON.stringify(arguments));
     const excludedSocket = await _getUserSocket(userId)
     if (!excludedSocket) {
-        // logger.debug('Shouldnt happen, socket not found')
-        // _printSockets();
+        logger.debug(`Shouldnt happen, socket not found ${ userId }`)
+        _printSockets();
         return;
     }
     logger.debug('broadcast to all but user: ', userId)
+        // logger.debug(room, '!!!')
     if (room) {
+        console.log('userId', userId);
+        logger.debug('room: ', room, ' type: ', type, ' data: ', data, ' userId: ', userId)
         excludedSocket.broadcast.to(room).emit(type, data)
+            //עד לפה תקין הגב שלי נשבר אני בהפסקונת
     } else {
         excludedSocket.broadcast.emit(type, data)
     }
@@ -80,7 +85,7 @@ async function broadcast({ type, data, room = null, userId }) {
 
 async function _getUserSocket(userId) {
     const sockets = await _getAllSockets();
-    const socket = sockets.find(s => s.userId == userId)
+    const socket = sockets.find(s => s.userId === userId)
     return socket;
 }
 async function _getAllSockets() {
@@ -91,11 +96,16 @@ async function _getAllSockets() {
 
 async function _printSockets() {
     const sockets = await _getAllSockets()
-    console.log(`Sockets: (count: ${sockets.length}):`)
+    console.log(`
+                Sockets: (count: $ { sockets.length }): `)
     sockets.forEach(_printSocket)
 }
+
 function _printSocket(socket) {
-    console.log(`Socket - socketId: ${socket.id} userId: ${socket.userId}`)
+    console.log(`
+                Socket - socketId: $ { socket.id }
+                userId: $ { socket.userId }
+                `)
 }
 
 module.exports = {
