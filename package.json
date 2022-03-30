@@ -23,6 +23,7 @@
         "mongodb": "^4.4.1",
         "socket-io": "^1.0.0",
         "socket.io": "^4.4.1",
+        "socket.io-store": "^1.0.0",
         "vite": "^2.8.6"
     }
 }
