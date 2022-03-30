@@ -14,7 +14,6 @@ async function getUser(req, res) {
 }
 
 
-//needs fixi
 async function getUsers(req, res) {
     try {
         const filterBy = {
