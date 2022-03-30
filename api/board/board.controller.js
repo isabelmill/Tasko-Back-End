@@ -47,18 +47,20 @@ async function addBoard(req, res) {
 // PUT (Update board)
 async function updateBoard(req, res) {
     try {
-        // const board = req.body;
-        logger.debug(req, 'ELIAS LOG')
+        const board = req.body;
+        // logger.debug(req, 'ELIAS LOG')
+        // console.log('got here', req);
         const { user } = req.session;
         console.log(user)
         console.log(user._id, board._id)
+        const boardId = board._Id
         const updatedBoard = await boardService.update(board)
             // console.log(updatedBoard);
         socketService.broadcast({
             type: 'board-changed',
             data: board,
-            room: board._id,
-            user: user._id
+            room: boardId,
+            userId: user._id
         })
         res.json(updatedBoard)
     } catch (err) {

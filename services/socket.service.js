@@ -15,14 +15,14 @@ function connectSockets(http, session) {
         socket.on('disconnect', socket => {
             console.log('Someone disconnected')
         })
-        socket.on('watch board', topic => {
-                console.log('watch', topic)
-                if (socket.myTopic === topic) return;
-                if (socket.myTopic) {
-                    socket.leave(socket.myTopic)
+        socket.on('watch board', boardId => {
+                console.log('watch', boardId)
+                if (socket.boardId === boardId) return;
+                if (socket.boardId) {
+                    socket.leave(socket.boardId)
                 }
-                socket.join(topic)
-                socket.myTopic = topic
+                socket.join(boardId)
+                socket.boardId = boardId
             })
             // socket.on('update board', boardId => {
             //     console.log('**************', boardId)
@@ -39,6 +39,7 @@ function connectSockets(http, session) {
             logger.debug(`Setting (${socket.id}) socket.userId = ${userId}`)
             socket.userId = userId
             console.log(socket.userId);
+            emitTo({ type: 'connected', data: userId })
         })
         socket.on('unset-user-socket', () => {
             delete socket.userId
@@ -47,10 +48,14 @@ function connectSockets(http, session) {
     })
 }
 
-function emitTo({ type, data, label }) {
-    if (label) gIo.to('watching:' + label).emit(type, data)
+function emitTo({ type, data, room }) {
+    if (room) gIo.to(room).emit(type, data)
     else gIo.emit(type, data)
 }
+// function emitTo({ type, data, label }) {
+//     if (label) gIo.to('watching:' + label).emit(type, data)
+//     else gIo.emit(type, data)
+// }
 
 async function emitToUser({ type, data, userId }) {
     logger.debug('Emiting to user socket: ' + userId)
@@ -64,7 +69,7 @@ async function emitToUser({ type, data, userId }) {
 
 // Send to all sockets BUT not the current socket 
 async function broadcast({ type, data, room = null, userId }) {
-    console.log('BROADCASTING', JSON.stringify(arguments));
+    // console.log('BROADCASTING', JSON.stringify(arguments));
     const excludedSocket = await _getUserSocket(userId)
     if (!excludedSocket) {
         logger.debug(`Shouldnt happen, socket not found ${ userId }`)
@@ -74,10 +79,11 @@ async function broadcast({ type, data, room = null, userId }) {
     logger.debug('broadcast to all but user: ', userId)
         // logger.debug(room, '!!!')
     if (room) {
-        console.log('userId', userId);
-        logger.debug('room: ', room, ' type: ', type, ' data: ', data, ' userId: ', userId)
+        logger.debug('room: ', room, ' type: ', type, ' userId: ', userId)
+        const clients = gIo.sockets.adapter.rooms.get('624211bd8517eaf0178ee3f1')
+        console.log(room, '624211bd8517eaf0178ee3f1', room === '624211bd8517eaf0178ee3f1');
+        console.log(clients);
         excludedSocket.broadcast.to(room).emit(type, data)
-            //עד לפה תקין הגב שלי נשבר אני בהפסקונת
     } else {
         excludedSocket.broadcast.emit(type, data)
     }
@@ -85,7 +91,10 @@ async function broadcast({ type, data, room = null, userId }) {
 
 async function _getUserSocket(userId) {
     const sockets = await _getAllSockets();
-    const socket = sockets.find(s => s.userId === userId)
+    const socket = sockets.find(s => {
+        console.log(s.userId, userId);
+        return s.userId === userId
+    })
     return socket;
 }
 async function _getAllSockets() {
