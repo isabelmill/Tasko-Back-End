@@ -8,8 +8,8 @@ if (false && process.env.NODE_ENV === 'production') {
 
 } else {
   // we are in development - return the dev keys!!!
-  // config = require('./prod')
-  config = require('./dev')
+  config = require('./prod')
+  // config = require('./dev')
 }
 
 module.exports = config
