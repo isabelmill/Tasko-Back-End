@@ -21,7 +21,6 @@ async function getBoardById(req, res) {
     try {
         const boardId = req.params._id;
         const board = await boardService.getById(boardId)
-        console.log('boardID:::::: ', boardId)
         res.json(board)
     } catch (err) {
         logger.error('Failed to get board', err)
@@ -50,15 +49,10 @@ async function updateBoard(req, res) {
     try {
         const board = req.body;
         var { user } = req.session;
-        // logger.debug(req, 'ELIAS LOG')
-        // console.log('got here', req);
-        // console.log('USER ::::::', user)
-        // console.log(user._id, board._id)
         if (!user) user = { _id: '624559a71ec4197167765f73' }
         const boardId = board._Id
         logger.debug('boardId: ', boardId, ' userId : ', user._id)
         const updatedBoard = await boardService.update(board)
-            // console.log(updatedBoard);
         socketService.broadcast({
             type: 'board-changed',
             data: board,
