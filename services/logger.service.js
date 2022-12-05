@@ -25,7 +25,6 @@ function doLog(level, ...args) {
         (typeof arg === 'string' || isError(arg)) ? arg : JSON.stringify(arg)
     )
 
-    //changed here because VS doesnt like - const sessionId = store?.sessionId
 
     var line = strs.join(' | ')
     const store = asyncLocalStorage.getStore()

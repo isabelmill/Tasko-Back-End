@@ -36,10 +36,7 @@ const userRoutes = require('./api/user/user.routes')
 const boardRoutes = require('./api/board/board.routes')
 
 
-const {
-    connectSockets
-} = require('./services/socket.service')
-// routes
+const { connectSockets } = require('./services/socket.service')
 const setupAsyncLocalStorage = require('./middlewares/setupAls.middleware')
 
 
@@ -52,7 +49,7 @@ connectSockets(http, session)
 
 // Make every server-side-route to match the index.html
 // so when requesting http://localhost:3030/index.html/car/123 it will still respond with
-// our SPA (single page app) (the index.html file) and allow vue/react-router to take it from there
+// our SPA (single page app) (the index.html file) and allow vue-router to take it from there
 app.get('/**', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'))
 })
