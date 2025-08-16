@@ -5,11 +5,12 @@ const logger = require('./logger.service');
 var gIo = null
 
 function connectSockets(http, session) {
-    gIo = require('socket.io')(http, {
-        cors: {
-            origin: '*',
-        }
-    })
+   gIo = require('socket.io')(http, {
+    cors: {
+        origin: 'https://YOUR_FRONTEND.onrender.com',  // 👈 your frontend URL
+        methods: ['GET', 'POST']
+    }
+})
     gIo.on('connection', socket => {
         socket.on('disconnect', socket => {
             console.log('Someone disconnected')
