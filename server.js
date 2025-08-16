@@ -6,6 +6,12 @@ const app = express()
 const http = require('http').createServer(app)
 require("dotenv").config();
 
+const mongoose = require('mongoose')
+mongoose
+    .connect(process.env.MONGO_URI)
+    .then(() => console.log('✅ Connected to MongoDB'))
+    .catch((err) => console.error('❌ MongoDB connection error:', err))
+
 
 // Express App Config
 const session = expressSession({
