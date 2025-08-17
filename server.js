@@ -33,9 +33,7 @@ const session = expressSession({
 app.use(session);
 
 // CORS setup
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.resolve(__dirname, 'public')));
-} else {
+
   const corsOptions = {
     origin: [
       'http://127.0.0.1:8080',
@@ -47,7 +45,7 @@ if (process.env.NODE_ENV === 'production') {
     credentials: true
   };
   app.use(cors(corsOptions));
-}
+
 
 // --- Routes ---
 const authRoutes = require('./api/auth/auth.routes');
