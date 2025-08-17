@@ -24,7 +24,11 @@ const session = expressSession({
   secret: process.env.SESSION_SECRET || 'coding_is_amazing',
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: process.env.NODE_ENV === 'production' }
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // only over HTTPS in prod
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // needed for cross-origin cookies
+    httpOnly: true,
+  }
 });
 app.use(session);
 
