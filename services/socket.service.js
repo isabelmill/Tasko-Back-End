@@ -7,7 +7,7 @@ var gIo = null
 function connectSockets(http, session) {
    gIo = require('socket.io')(http, {
     cors: {
-        origin: 'https://YOUR_FRONTEND.onrender.com',  // 👈 your frontend URL
+        origin: 'https://tasko-front-end.onrender.com',  // 👈 your frontend URL
         methods: ['GET', 'POST']
     }
 })
