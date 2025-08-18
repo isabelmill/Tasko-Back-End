@@ -13,24 +13,36 @@ const server = http.createServer(app);
 const mongoUri = process.env.MONGO_URI;
 mongoose
   .connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('✅ Connected to MongoDB'))
+  .then(() => {
+    console.log('✅ Connected to MongoDB')
+    seedGuestUser()   // <--- add this
+  })
   .catch((err) => console.error('❌ MongoDB connection error:', err));
+
+// --- Seed guest user if not present ---
+async function seedGuestUser() {
+  try {
+    const User = require('./api/user/user.model')
+    const guest = await User.findOne({ username: 'guest' })
+    if (!guest) {
+      await User.create({
+        username: 'guest',
+        fullname: 'Guest User',
+        // bcrypt hash for password: guest123
+        password: '$2a$10$yqzajboiFpnZyOlsNVyq5uNEi8umPjCnHREmIr/BHDDWVsUm54W3i'
+      })
+      console.log('✅ Guest user created!')
+    } else {
+      console.log('ℹ️  Guest user already exists, skipping seed')
+    }
+  } catch (err) {
+    console.error('❌ Failed to seed guest user:', err)
+  }
+}
 
 // --- Middleware ---
 app.use(express.json());
 
-// Session config
-const session = expressSession({
-  secret: process.env.SESSION_SECRET || 'coding_is_amazing',
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production', // only over HTTPS in prod
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // needed for cross-origin cookies
-    httpOnly: true,
-  }
-});
-app.use(session);
 
 // CORS setup
 
