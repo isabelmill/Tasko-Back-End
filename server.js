@@ -15,7 +15,7 @@ mongoose
   .connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('✅ Connected to MongoDB')
-    seedGuestUser()   // <--- add this
+    seedGuestUser()
   })
   .catch((err) => console.error('❌ MongoDB connection error:', err));
 
@@ -43,21 +43,31 @@ async function seedGuestUser() {
 // --- Middleware ---
 app.use(express.json());
 
+// --- Session config (must come BEFORE connectSockets)
+const session = expressSession({
+  secret: process.env.SESSION_SECRET || 'coding_is_amazing',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    httpOnly: true,
+  }
+})
+app.use(session)
 
-// CORS setup
-
-  const corsOptions = {
-    origin: [
-      'http://127.0.0.1:8080',
-      'http://localhost:8080',
-      'http://127.0.0.1:3000',
-      'http://localhost:3000',
-      'https://tasko-front-end.onrender.com'
-    ],
-    credentials: true
-  };
-  app.use(cors(corsOptions));
-
+// --- CORS setup ---
+const corsOptions = {
+  origin: [
+    'http://127.0.0.1:8080',
+    'http://localhost:8080',
+    'http://127.0.0.1:3000',
+    'http://localhost:3000',
+    'https://tasko-front-end.onrender.com'
+  ],
+  credentials: true
+}
+app.use(cors(corsOptions));
 
 // --- Routes ---
 const authRoutes = require('./api/auth/auth.routes');
@@ -72,7 +82,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/board', boardRoutes);
 
-// --- Socket setup ---
+// --- Socket setup (AFTER session is defined)
 connectSockets(server, session);
 
 // --- SPA fallback ---
